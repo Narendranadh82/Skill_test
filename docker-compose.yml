@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: school_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: school_mgmt
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./seed_db:/docker-entrypoint-initdb.d
+
+  backend:
+    container_name: school_backend
+    build:
+      context: ./backend
+    restart: always
+    env_file:
+      - ./backend/.env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: school_mgmt
+    depends_on:
+      - postgres
+    ports:
+      - "5007:5007"
+
+  frontend:
+    container_name: school_frontend
+    build:
+      context: ./frontend
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      VITE_API_BASE_URL: http://localhost:5007
+    ports:
+      - "5173:5173"
+
+volumes:
+  pgdata:

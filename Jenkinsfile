@@ -12,7 +12,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                url: 'https://github.com/<your-username>/<repo>.git'
+                url: 'https://github.com/Narendranadh82/Skill_test.git'
             }
         }
 
